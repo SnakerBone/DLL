@@ -1,9 +1,7 @@
 package xyz.snaker.natives;
 
-import java.io.IOException;
+import java.io.File;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import xyz.snaker.snkr4j.SimpleLogger;
 import xyz.snaker.snkr4j.SnakerLogger;
@@ -21,29 +19,16 @@ public class SnakerNatives
 
     private static void initialize()
     {
-        URL resource = SnakerNatives.class.getResource("snkr.dll");
+        URL url = SnakerNatives.class.getClassLoader().getResource("snkr.dll");
 
-        if (resource == null) {
+        if (url == null) {
             LOGGER.error("Could not load libraries for SnakerNatives: snkr.dll does not exist");
             return;
         }
 
         try {
-            Path path = Paths.get(resource.toURI());
-
-            if (!path.isAbsolute()) {
-                path = path.toAbsolutePath();
-            }
-
-            if (!path.isAbsolute()) {
-                path = Paths.get(path.toAbsolutePath().toString()).toAbsolutePath();
-            }
-
-            if (!path.isAbsolute()) {
-                throw new IOException("Could not make path absolute: " + path);
-            }
-
-            System.load(resource.getPath());
+            File file = new File(url.getFile()).getAbsoluteFile();
+            System.load(file.getAbsolutePath());
         } catch (Exception e) {
             LOGGER.errorf("Could not load libraries for SnakerNatives: []", e.getMessage());
             return;
