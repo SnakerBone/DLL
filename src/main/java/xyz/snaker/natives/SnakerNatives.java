@@ -1,12 +1,8 @@
 package xyz.snaker.natives;
 
-import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.function.Function;
 
 import xyz.snaker.snkr4j.SimpleLogger;
 import xyz.snaker.snkr4j.SnakerLogger;
@@ -17,7 +13,6 @@ import xyz.snaker.snkr4j.SnakerLogger;
 public class SnakerNatives
 {
     public static final SnakerLogger LOGGER = new SimpleLogger(SnakerNatives.class, true);
-    public static Function<Boolean, String> libraryName = ext -> ext ? "snkr.dll" : "snkr";
 
     static {
         initialize();
@@ -26,26 +21,16 @@ public class SnakerNatives
     private static void initialize()
     {
         ClassLoader loader = SnakerNatives.class.getClassLoader();
-        URL resource = loader.getResource("xyz/snaker/natives");
+        URL resource = loader.getResource("snkr.dll");
 
-        if (resource != null) {
-            String name = libraryName.apply(true);
-
-            String sourcePath = "src\\main\\java\\xyz\\snaker\\natives\\" + name;
-            String destPath = new File(resource.getPath()).getAbsolutePath();
-
-            Path source = Paths.get("").resolve(sourcePath).toAbsolutePath();
-            Path dest = Paths.get(destPath, name).toAbsolutePath();
-
-            copyAndLoad(source, dest);
+        if (resource == null) {
+            LOGGER.error("Could not load libraries for SnakerNatives: snkr.dll does not exist");
+            return;
         }
-    }
 
-    private static void copyAndLoad(Path source, Path dest)
-    {
         try {
-            Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
-            System.load(dest.toString());
+            Path path = Paths.get(resource.toURI()).toAbsolutePath();
+            System.load(path.toString());
         } catch (Exception e) {
             LOGGER.errorf("Could not load libraries for SnakerNatives: []", e.getMessage());
             return;
