@@ -44,7 +44,7 @@ public class SnakerNatives
                 throw new IOException("Could not make path absolute: " + path);
             }
 
-            System.loadLibrary("snkr");
+            System.loadLibrary("snkr.dll");
         } catch (Exception e) {
             LOGGER.errorf("Could not load libraries for SnakerNatives: []", e.getMessage());
             return;
