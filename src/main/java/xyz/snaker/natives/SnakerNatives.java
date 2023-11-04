@@ -3,6 +3,7 @@ package xyz.snaker.natives;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import xyz.snaker.snkr4j.SimpleLogger;
 import xyz.snaker.snkr4j.SnakerLogger;
@@ -29,18 +30,18 @@ public class SnakerNatives
         }
 
         try {
-            Path path = Path.of(resource.toURI());
+            Path path = Paths.get(resource.toURI());
 
             if (!path.isAbsolute()) {
                 path = path.toAbsolutePath();
             }
 
             if (!path.isAbsolute()) {
-                path = Path.of(path.toAbsolutePath().toString()).toAbsolutePath();
+                path = Paths.get(path.toAbsolutePath().toString()).toAbsolutePath();
             }
 
             if (!path.isAbsolute()) {
-                throw new IOException("Could not make path absolute: %s".formatted(path));
+                throw new IOException("Could not make path absolute: " + path);
             }
 
             System.load(path.toString());
