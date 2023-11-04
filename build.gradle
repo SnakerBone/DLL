@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group = 'xyz.snaker.natives'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.SnakerBone:Snaker4j:1.0'
+}
+
+tasks.register('docJar', Jar) {
+    build.dependsOn it
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+tasks.register('srcJar', Jar) {
+    build.dependsOn it
+    from sourceSets.main.allSource
+    archiveClassifier = 'sources'
+}
+
+artifacts {
+    archives docJar
+    archives srcJar
+}
