@@ -28,13 +28,19 @@ public class SnakerNatives
 
         try {
             File file = new File(url.getFile()).getAbsoluteFile();
-            System.load(file.getAbsolutePath());
+            String path = file.getAbsolutePath().replace("%23104!", "");
+            System.load(path);
         } catch (Exception e) {
             LOGGER.errorf("Could not load libraries for SnakerNatives: []", e.getMessage());
             return;
         }
 
         LOGGER.infof("Loaded native libraries for SnakerNatives");
+    }
+
+    public static void main(String[] args)
+    {
+        
     }
 
     /**
