@@ -21,8 +21,7 @@ public class SnakerNatives
 
     private static void initialize()
     {
-        ClassLoader loader = SnakerNatives.class.getClassLoader();
-        URL resource = loader.getResource("snkr.dll");
+        URL resource = SnakerNatives.class.getResource("snkr.dll");
 
         if (resource == null) {
             LOGGER.error("Could not load libraries for SnakerNatives: snkr.dll does not exist");
@@ -44,7 +43,7 @@ public class SnakerNatives
                 throw new IOException("Could not make path absolute: " + path);
             }
 
-            System.loadLibrary("snkr.dll");
+            System.load(resource.getPath());
         } catch (Exception e) {
             LOGGER.errorf("Could not load libraries for SnakerNatives: []", e.getMessage());
             return;
