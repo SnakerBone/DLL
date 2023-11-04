@@ -52,11 +52,6 @@ public class SnakerNatives
         LOGGER.infof("Loaded native libraries for SnakerNatives");
     }
 
-    public static void main(String[] args)
-    {
-
-    }
-
     /**
      * Forces the current windows system to "blue screen" by calling an internal debug crash function provided in <a href="https://en.wikipedia.org/wiki/Microsoft_Windows_library_files#NTDLL.DLL">NtDll.dll</a>
      *
