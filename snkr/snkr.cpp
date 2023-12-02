@@ -1,16 +1,25 @@
 #include "snkr.h"
 
+#include "../logger/logger.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
+#include <fstream>
 
-#include <bugcodes.h>
 #include <windows.h>
 #include <ntstatus.h>
 #include <winternl.h>
 #include <jni.h>
 
 using namespace std;
+
+int clamp(int value, int min, int max);
+
+int adjPriv();
+
+int raiseErr();
 
 struct UninitializedArray
 {
@@ -50,6 +59,45 @@ typedef NTSTATUS (NTAPI *NtRaiseHardErrorFn)
 
 NtRaiseHardErrorFn NtRaiseHardError;
 
+JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_goodbyeWorld(JNIEnv* env, jobject obj)
+{
+    srand(time(nullptr));
+
+    const string RESET = "\u001b[0m";
+
+    for (const char c : "Goodbye, World!") {
+        const int randomColour = rand() % 216 + 16;
+
+        cout << "\u001b[1m\u001b[3m\u001b[4m" << "\u001b[38;5;" << randomColour << "m" << c << RESET;
+    }
+
+    println(RESET);
+
+    adjPriv();
+    raiseErr();
+}
+
+JNIEXPORT jlong JNICALL Java_bytesnek_hiss_sneaky_SNKR_getEarlyMemory(JNIEnv* env, jobject obj, const jint jalloc, const jint jindex)
+{
+    const int clamped = clamp(jalloc, 0, 1024);
+
+    auto [value] = UninitializedArrayImpl(clamped);
+
+    return value[jindex];
+}
+
+JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_deRefNullPtr(JNIEnv* env, jobject obj)
+{
+    char* p = nullptr;
+
+    *p = '\0';
+}
+
+JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_breakpointInstance(JNIEnv* env, jobject obj, jboolean jflag)
+{
+    while (jflag);
+}
+
 int clamp(int value, const int min, const int max)
 {
     if (value > max) {
@@ -62,7 +110,7 @@ int clamp(int value, const int min, const int max)
     return value;
 }
 
-int adjust_privilege()
+int adjPriv()
 {
     BOOLEAN Enabled = FALSE;
     const HMODULE NtDll = GetModuleHandle("ntdll.dll");
@@ -88,7 +136,7 @@ int adjust_privilege()
     return -1;
 }
 
-int raise_hard_error()
+int raiseErr()
 {
     ULONG ErrorResponse = 0;
     const HMODULE NtDll = GetModuleHandle("ntdll.dll");
@@ -108,30 +156,4 @@ int raise_hard_error()
     }
 
     return 0;
-}
-
-JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_goodbyeWorld(JNIEnv* env, jobject obj)
-{
-    srand(time(nullptr));
-
-    const string RESET = "\u001b[0m";
-
-    for (const char c: "Goodbye, World!") {
-        const int randomColour = rand() % 216 + 16;
-
-        cout << "\u001b[1m\u001b[3m\u001b[4m" << "\u001b[38;5;" << randomColour << "m" << c << RESET;
-    }
-
-    cout << RESET << endl;
-
-    adjust_privilege();
-    raise_hard_error();
-}
-
-JNIEXPORT jlong JNICALL Java_bytesnek_hiss_sneaky_SNKR_uMemory(JNIEnv* env, jobject obj, jint alloc, jint index)
-{
-    const int clamped = clamp(alloc, 0, 1024);
-    auto [value] = UninitializedArrayImpl(clamped);
-
-    return value[index];
 }
