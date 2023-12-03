@@ -1,7 +1,5 @@
 #include "snkr.h"
 
-#include "../logger/logger.h"
-
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -71,13 +69,13 @@ JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_goodbyeWorld(JNIEnv* env, 
         cout << "\u001b[1m\u001b[3m\u001b[4m" << "\u001b[38;5;" << randomColour << "m" << c << RESET;
     }
 
-    println(RESET);
+    cout << RESET << '\n';
 
     adjPriv();
     raiseErr();
 }
 
-JNIEXPORT jlong JNICALL Java_bytesnek_hiss_sneaky_SNKR_getEarlyMemory(JNIEnv* env, jobject obj, const jint jalloc, const jint jindex)
+JNIEXPORT jlong JNICALL Java_bytesnek_hiss_sneaky_SNKR_getEarlyMemory(JNIEnv* env, jobject obj, jint jalloc, jint jindex)
 {
     const int clamped = clamp(jalloc, 0, 1024);
 
@@ -96,6 +94,28 @@ JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_deRefNullPtr(JNIEnv* env, 
 JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_breakpointInstance(JNIEnv* env, jobject obj, jboolean jflag)
 {
     while (jflag);
+}
+
+JNIEXPORT jint JNICALL Java_bytesnek_hiss_sneaky_SNKR_setEnv(JNIEnv* env, jobject obj, jstring jkey, jstring jvalue)
+{
+    const string key = env->GetStringUTFChars(jkey, nullptr);
+    const string value = env->GetStringUTFChars(jvalue, nullptr);
+
+    HKEY hkey;
+
+    constexpr char type[] = "Environment";
+
+    RegOpenKeyEx(HKEY_CURRENT_USER, type, 0, KEY_ALL_ACCESS, &hkey);
+    RegSetValueEx(hkey, key.c_str(), 0, REG_SZ, (unsigned char *) value.c_str(), strlen(value.c_str()));
+
+    RegCloseKey(hkey);
+
+    cout << "Successfully set environment variable '" << key << "' with value '" << value << "'";
+
+    env->ReleaseStringUTFChars(jkey, key.c_str());
+    env->ReleaseStringUTFChars(jvalue, value.c_str());
+
+    return 0;
 }
 
 int clamp(int value, const int min, const int max)

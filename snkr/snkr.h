@@ -39,6 +39,14 @@ JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_deRefNullPtr
 JNIEXPORT void JNICALL Java_bytesnek_hiss_sneaky_SNKR_breakpointInstance
 (JNIEnv*, jobject, jboolean);
 
+/*
+* Class:     bytesnek_hiss_sneaky_SNKR
+* Method:    setEnv
+* Signature: (Ljava/lang/StringLjava/lang/String)V
+*/
+JNIEXPORT jint JNICALL Java_bytesnek_hiss_sneaky_SNKR_setEnv
+(JNIEnv*, jobject, jstring, jstring);
+
 #ifdef __cplusplus
 }
 #endif

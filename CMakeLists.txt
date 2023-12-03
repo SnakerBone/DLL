@@ -11,6 +11,9 @@ set(SOURCE_FILES
         snkr/snkr.cpp
         logger/logger.cpp
         logger/logger.h
+        main.cpp
+        main.cpp
+        main.cpp
 )
 
 add_executable(DLL ${SOURCE_FILES})
